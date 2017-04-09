@@ -75,7 +75,7 @@ namespace PurpleMonitoringClient
                     var guid = Guid.NewGuid();
                     var notifier = new DummyNotifier(8, 80, guid);
                     var cluster = new Cluster(8, "Dummy Cluster", guid, notifier);
-                    rootFrame.Navigate(typeof(ClusterState), cluster);
+                    rootFrame.Navigate(typeof(ClusterInfoPage), cluster);
                     Client = notifier;
                     Task.Run(() => notifier.Run());
                 }

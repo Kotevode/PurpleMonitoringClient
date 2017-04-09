@@ -105,6 +105,9 @@
     <Compile Include="ClusterState.xaml.cs">
       <DependentUpon>ClusterState.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LoggerPage.xaml.cs">
+      <DependentUpon>LoggerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Mock\DummyNotifier.cs" />
     <Compile Include="Model\Cluster.cs" />
     <Compile Include="Model\Job.cs" />
@@ -117,6 +120,8 @@
     <Compile Include="Client\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\JobViewModel.cs" />
+    <Compile Include="ViewModel\LoggerViewModel.cs" />
+    <Compile Include="ViewModel\LogMessageViewModel.cs" />
     <Compile Include="ViewModel\NodeStateViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +150,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ClusterState.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LoggerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,44 @@
+﻿<Page
+    x:Class="PurpleMonitoringClient.LoggerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PurpleMonitoringClient"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PurpleMonitoringClient.ViewModel"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="LogMessageItemTemplate" x:DataType="vm:LogMessageViewModel">
+            <StackPanel>
+                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                           Text="{x:Bind Timestamp}"
+                           TextAlignment="Right"
+                           Margin="0,0,0,8"/>
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                           Text="{x:Bind Body}"/>
+            </StackPanel>
+        </DataTemplate>
+        <Style x:Key="LogMessageContainerStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView Header="Лог"
+                  ItemTemplate="{StaticResource LogMessageItemTemplate}"
+                  ItemsSource="{x:Bind ViewModel.Messages}"
+                  ItemContainerStyle="{StaticResource LogMessageContainerStyle}">
+            <ListView.HeaderTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}"
+                               Text="{x:Bind}"/>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel VerticalAlignment="Bottom"
+                                     ItemsUpdatingScrollMode="KeepLastItemInView"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+    </Grid>
+</Page>

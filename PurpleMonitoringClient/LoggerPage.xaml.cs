@@ -1,5 +1,4 @@
-﻿using PurpleMonitoringClient.Model;
-using PurpleMonitoringClient.ViewModel;
+﻿using PurpleMonitoringClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static PurpleMonitoringClient.Model.Cluster;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,22 +22,25 @@ namespace PurpleMonitoringClient
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ClusterInfoPage : Page
+    public sealed partial class LoggerPage : Page
     {
-        public ClusterInfoPage()
+        public LoggerViewModel ViewModel { get; private set; }
+
+        public LoggerPage()
         {
             this.InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is Cluster)
+            if (e.Parameter is Logger)
             {
-                var cluster = e.Parameter as Cluster;
-                ClusterStatePageFrame.Navigate(typeof(ClusterState), cluster);
-                LoggerPageFrame.Navigate(typeof(LoggerPage), cluster.MessgeLogger);
+                ViewModel = new LoggerViewModel(e.Parameter as Logger, Dispatcher);
+            }
+            else
+            {
+                throw new NotSupportedException("Parameter not supported yet");
             }
         }
-
     }
 }

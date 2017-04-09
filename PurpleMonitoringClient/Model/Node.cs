@@ -13,6 +13,13 @@ namespace PurpleMonitoringClient.Model
         public event EventHandler OnUpdate;
         public INotifier Notifier;
         public int Index { get; set; }
+        public int TotalWeight
+        {
+            get
+            {
+                return Jobs.Sum(j => j.Weight);
+            }
+        }
 
         public Node(int index, INotifier notifier)
         {
@@ -32,16 +39,17 @@ namespace PurpleMonitoringClient.Model
         private void Notifier_OnProcessingDone(object sender, ProcessingDoneEventArgs e)
         {
             Jobs.Clear();
-            OnUpdate(this, new EventArgs());
+            OnUpdate?.Invoke(this, new EventArgs());
         }
 
         private void Notifier_OnJobStatus(object sender, JobStatusEventArgs e)
         {
-            (from j in Jobs
+            int count = (from j in Jobs
              join s in e.JobStatuses on j.Index equals s.Index
              select new { Job = j, NewStatus = s.Status })
-             .Select((x) => x.Job.Status = x.NewStatus);
-            OnUpdate(this, new EventArgs());
+             .Select((x) => x.Job.Status = x.NewStatus).Count();
+            if (count != 0)
+                OnUpdate?.Invoke(this, new EventArgs());
         }
 
         private void Notifier_OnJobsDistributed(object sender, JobsDistributedEventArgs e)
@@ -53,13 +61,13 @@ namespace PurpleMonitoringClient.Model
                         Index = j.Index,
                         Weight = j.Weight,
                     });
-            OnUpdate(this, new EventArgs());
+            OnUpdate?.Invoke(this, new EventArgs());
         }
 
         private void Notifier_OnProcessingStarted(object sender, ProcessingStartedEventArgs e)
         {
             Jobs.Clear();
-            OnUpdate(this, new EventArgs());
+            OnUpdate?.Invoke(this, new EventArgs());
         }
     }
 }

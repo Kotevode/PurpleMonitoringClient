@@ -1,0 +1,77 @@
+﻿<Page
+    x:Class="PurpleMonitoringClient.ClusterState"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PurpleMonitoringClient"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PurpleMonitoringClient.ViewModel"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="JobItemTemplate" x:DataType="vm:JobViewModel">
+            <Grid>
+                <RelativePanel Height="{x:Bind BlockHeight}">
+                    <RelativePanel.Background>
+                        <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
+                    </RelativePanel.Background>
+                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+                               RelativePanel.AlignTopWithPanel="True"
+                               RelativePanel.AlignLeftWithPanel="True"/>
+                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                               RelativePanel.AlignHorizontalCenterWithPanel="True"
+                               RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                </RelativePanel>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="JobListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="MinHeight" Value="0"/>
+        </Style>
+        <DataTemplate x:Key="NodeItemTemplate" x:DataType="vm:NodeStateViewModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <ListView ItemTemplate="{StaticResource JobItemTemplate}"
+                          FlowDirection="RightToLeft"
+                          ItemsSource="{x:Bind Done}"
+                          ItemContainerStyle="{StaticResource JobListViewItemStyle}"
+                          Height="300" Width="100"
+                          Grid.Row="1"/>
+                <ListView ItemTemplate="{StaticResource JobItemTemplate}"
+                          ItemsSource="{x:Bind Undone}"
+                          ItemContainerStyle="{StaticResource JobListViewItemStyle}"
+                          Height="300" Width="100">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel VerticalAlignment="Bottom"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView ItemsSource="{x:Bind ViewModel.Nodes}"
+                  ItemTemplate="{StaticResource NodeItemTemplate}"
+                  Height="600"
+                  ScrollViewer.IsHorizontalRailEnabled="True"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  IsItemClickEnabled="False">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal"
+                                     Width="Auto"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+    </Grid>
+</Page>

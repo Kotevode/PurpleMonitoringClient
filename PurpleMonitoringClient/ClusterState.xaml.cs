@@ -1,4 +1,5 @@
-﻿using PurpleMonitoringClient.ViewModel;
+﻿using PurpleMonitoringClient.Model;
+using PurpleMonitoringClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,11 +22,26 @@ namespace PurpleMonitoringClient
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ClusterInfoPage : Page
+    public sealed partial class ClusterState : Page
     {
-        public ClusterInfoPage()
+        public ClusterDetailViewModel ViewModel { get; set; }
+
+        public ClusterState()
         {
             this.InitializeComponent();
         }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is Cluster)
+            {
+                ViewModel = new ClusterDetailViewModel(e.Parameter as Cluster, this.Dispatcher);
+            }
+            else
+            {
+                throw new NotSupportedException("Parameter is not supported");
+            }
+        }
+
     }
 }

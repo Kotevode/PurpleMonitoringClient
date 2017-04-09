@@ -7,13 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="500"/>
-        </Grid.ColumnDefinitions>
-        <Frame Name="ClusterStateFrame"/>
-        <Frame Name="LogFrame"
-               Grid.Column="1"/>
-    </Grid>
+    <SplitView Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+               DisplayMode="Inline"
+               IsPaneOpen="True">
+        <SplitView.Pane>
+            <Frame Name="LoggerPageFrame"/>
+        </SplitView.Pane>
+        <Frame Name="ClusterStatePageFrame"/>
+    </SplitView>
 </Page>

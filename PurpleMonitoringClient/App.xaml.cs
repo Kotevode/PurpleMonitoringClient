@@ -1,9 +1,12 @@
 ﻿using PurpleMonitoringClient.Client;
+using PurpleMonitoringClient.Mock;
+using PurpleMonitoringClient.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -69,7 +72,12 @@ namespace PurpleMonitoringClient
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    var guid = Guid.NewGuid();
+                    var notifier = new DummyNotifier(8, 80, guid);
+                    var cluster = new Cluster(8, "Dummy Cluster", guid, notifier);
+                    rootFrame.Navigate(typeof(ClusterState), cluster);
+                    Client = notifier;
+                    Task.Run(() => notifier.Run());
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();

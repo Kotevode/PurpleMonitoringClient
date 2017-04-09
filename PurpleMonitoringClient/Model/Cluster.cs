@@ -23,9 +23,9 @@ namespace PurpleMonitoringClient.Model
             public INotifier Notifier { get; set; }
             public ObservableCollection<LogMessage> Log = new ObservableCollection<LogMessage>();
 
-            public Logger(INotifier client)
+            public Logger(INotifier notifier)
             {
-                this.Notifier = Notifier;
+                this.Notifier = notifier;
                 Subscribe();
             }
 
@@ -42,27 +42,68 @@ namespace PurpleMonitoringClient.Model
 
             private void Notifier_OnLogMessage(object sender, LogMessageEventArgs e)
             {
-                throw new NotImplementedException();
+                foreach (var m in e.Messages)
+                    Log.Add(new LogMessage()
+                    {
+                        Message = m.Body,
+                        Timestamp = m.Timestamp
+                    });
             }
 
             private void Notifier_OnProcessingDone(object sender, ProcessingDoneEventArgs e)
             {
-                throw new NotImplementedException();
+                Log.Add(new LogMessage()
+                {
+                    Message = "Обработка задач завершена",
+                    Timestamp = DateTime.Now
+                });
             }
 
             private void Notifer_OnJobStatus(object sender, JobStatusEventArgs e)
             {
-                throw new NotImplementedException();
+                foreach (var s in e.JobStatuses)
+                {
+                    string m = null;
+                    switch (s.Status)
+                    {
+                        case JobStatus.Done:
+                            m = String.Format("Задача {0} выполнена", s.Index);
+                            break;
+                        case JobStatus.Error:
+                            m = String.Format("Выполнение задачи {0} прервано возникновением ошибки", s.Index);
+                            break;
+                        case JobStatus.Waiting:
+                            m = String.Format("Задача {0} ожидает начала выполнения", s.Index);
+                            break;
+                        case JobStatus.Running:
+                            m = String.Format("Задача {0} выполняется", s.Index);
+                            break;
+                    }
+                    if (m != null)
+                        Log.Add(new LogMessage()
+                        {
+                            Message = m,
+                            Timestamp = s.Timestamp
+                        });
+                }
             }
 
             private void Notifier_OnJobsDistributed(object sender, JobsDistributedEventArgs e)
             {
-                throw new NotImplementedException();
+                Log.Add(new LogMessage()
+                {
+                    Message = "Задачи распределены между вычислительными узлами",
+                    Timestamp = DateTime.Now
+                });
             }
 
             private void Notifier_OnProcessingStarted(object sender, ProcessingStartedEventArgs e)
             {
-                throw new NotImplementedException();
+                Log.Add(new LogMessage()
+                {
+                    Message = "Старт обработки задач",
+                    Timestamp = DateTime.Now
+                });
             }
 
             #endregion
@@ -144,18 +185,29 @@ namespace PurpleMonitoringClient.Model
         public INotifier Notifier { get; private set; }
         public Logger MessgeLogger { get; private set; }
         public List<Node> Nodes { get; private set; }
-        public event EventHandler ClusterUpdated;
+        public event EventHandler OnUpdated;
         public string Name { get; private set; }
 
         public Cluster(int size, string name, Guid GUID, INotifier notifier)
         {
             this.Nodes = new List<Node>();
+            this.Notifier = new Filter(GUID, notifier);
             for (int i = 0; i < size; i++)
                 Nodes.Add(new Node(i, Notifier));
             this.Name = name;
             this.GUID = GUID;
-            this.Notifier = new Filter(GUID, notifier);
-            this.MessgeLogger = new Logger(new Filter(GUID, notifier)); 
+            this.MessgeLogger = new Logger(new Filter(GUID, notifier));
+            Subscribe();
+        }
+
+        private void Subscribe()
+        {
+            Notifier.OnJobsDistributed += Notifier_OnJobsDistributed;
+        }
+
+        private void Notifier_OnJobsDistributed(object sender, JobsDistributedEventArgs e)
+        {
+            OnUpdated(this, new EventArgs());
         }
     }
 }

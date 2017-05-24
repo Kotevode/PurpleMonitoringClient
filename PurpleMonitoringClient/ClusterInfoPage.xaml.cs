@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -31,12 +32,20 @@ namespace PurpleMonitoringClient
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            ColorizeTitleBar();
             if (e.Parameter is Cluster)
             {
                 var cluster = e.Parameter as Cluster;
                 ClusterStatePageFrame.Navigate(typeof(ClusterState), cluster);
                 LoggerPageFrame.Navigate(typeof(LoggerPage), cluster.MessgeLogger);
             }
+        }
+
+        private void ColorizeTitleBar()
+        {
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.BackgroundColor = (this.Background as SolidColorBrush).Color;
+            titleBar.ButtonBackgroundColor = (this.Background as SolidColorBrush).Color;
         }
 
     }

@@ -6,33 +6,44 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:PurpleMonitoringClient.ViewModel"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    RequestedTheme="Light">
     <Page.Resources>
         <DataTemplate x:Key="LogMessageItemTemplate" x:DataType="vm:LogMessageViewModel">
             <StackPanel>
                 <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                            Text="{x:Bind Timestamp}"
                            TextAlignment="Right"
-                           Margin="0,0,0,8"/>
+                           Foreground="DarkGray"
+                           Margin="0,0,0,16"/>
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                           Text="{x:Bind Body}"/>
+                           Text="{x:Bind Body}"
+                           Margin="0,0,0,16"/>
             </StackPanel>
         </DataTemplate>
         <Style x:Key="LogMessageContainerStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView Header="Лог"
+    <Grid
+          Background="{ThemeResource Background}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Padding="32,16"
+              RequestedTheme="Dark"
+              Background="{ThemeResource HeaderBackground}">
+            <TextBlock Text="Лог"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+        </Grid>
+        <ListView
                   ItemTemplate="{StaticResource LogMessageItemTemplate}"
                   ItemsSource="{x:Bind ViewModel.Messages}"
-                  ItemContainerStyle="{StaticResource LogMessageContainerStyle}">
-            <ListView.HeaderTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}"
-                               Text="{x:Bind}"/>
-                </DataTemplate>
-            </ListView.HeaderTemplate>
+                  ItemContainerStyle="{StaticResource LogMessageContainerStyle}"
+            ScrollViewer.IsVerticalRailEnabled="False"
+            Padding="32,16"
+            Grid.Row="1">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel VerticalAlignment="Bottom"

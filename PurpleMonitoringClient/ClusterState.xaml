@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:PurpleMonitoringClient.ViewModel"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    RequestedTheme="Dark">
     <Page.Resources>
         <DataTemplate x:Key="JobItemTemplate" x:DataType="vm:JobViewModel">
             <Grid>
@@ -59,13 +60,25 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid RequestedTheme="Dark"
+          Background="{ThemeResource Background}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource HeaderBackground}"
+              Padding="32,16">
+            <TextBlock Text="Текущее состояние"
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+        </Grid>
         <ListView ItemsSource="{x:Bind ViewModel.Nodes}"
                   ItemTemplate="{StaticResource NodeItemTemplate}"
                   Height="600"
                   ScrollViewer.IsHorizontalRailEnabled="True"
                   ScrollViewer.HorizontalScrollMode="Enabled"
-                  IsItemClickEnabled="False">
+                  IsItemClickEnabled="False"
+                  Padding="32,16"
+                  Grid.Row="1">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal"

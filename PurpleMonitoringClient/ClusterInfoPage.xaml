@@ -5,11 +5,13 @@
     xmlns:local="using:PurpleMonitoringClient"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource Background}"
+    RequestedTheme="Dark">
 
-    <SplitView Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
-               DisplayMode="Inline"
-               IsPaneOpen="True">
+    <SplitView DisplayMode="Inline"
+               IsPaneOpen="True"
+               RequestedTheme="Dark">
         <SplitView.Pane>
             <Frame Name="LoggerPageFrame"/>
         </SplitView.Pane>

@@ -126,7 +126,7 @@ namespace PurpleMonitoringClient.Mock
                         {
                             Index = index,
                             Status = status,
-                            Timestamp = DateTime.Now
+                            Timestamp = DateTime.Now.AddHours(-32)
                         }
                     }
             });

@@ -1,11 +1,12 @@
 ﻿using PurpleMonitoringClient.Client;
-using PurpleMonitoringClient.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static PurpleMonitoringClient.Client.JobStatusEventArgs;
+using static PurpleMonitoringClient.Client.ProcessingStartedEventArgs;
 
 namespace PurpleMonitoringClient.Mock
 {
@@ -13,21 +14,25 @@ namespace PurpleMonitoringClient.Mock
     {
         public event EventHandler<ClusterCreatedEventArgs> OnClusterCreated;
         public event EventHandler<ProcessingStartedEventArgs> OnProcessingStarted;
-        public event EventHandler<JobsDistributedEventArgs> OnJobsDistributed;
         public event EventHandler<JobStatusEventArgs> OnJobStatus;
         public event EventHandler<ProcessingDoneEventArgs> OnProcessingDone;
         public event EventHandler<ClusterFinalizedEventArgs> OnClusterFinalized;
         public event EventHandler<LogMessageEventArgs> OnLogMessage;
 
+        class Job
+        {
+            public int Index { get; set; }
+            public JobStatus Status { get; set; }
+            public int Weight { get; set; }
+        }
+
         List<Job> Jobs = new List<Job>();
         int size;
-        Guid ClusterGUID;
 
-        public DummyNotifier(int clusterSize, int jobCount, Guid clusterGUID)
+        public DummyNotifier(int clusterSize, int jobCount)
         {
             MakeJobs(jobCount);
             size = clusterSize;
-            ClusterGUID = clusterGUID;
         }
 
         private void MakeJobs(int jobCount)
@@ -46,49 +51,51 @@ namespace PurpleMonitoringClient.Mock
 
         public void Run()
         {
-            SendProcessStarted();
-            SendJobDistributed();
+            SendClusterCreated();
+            SendProcessingStarted();
             SendProcessingLog();
             SendProcessingDone();
+            SendClusterFinalized();
+        }
+
+        private void SendClusterFinalized()
+        {
+            OnClusterFinalized?.Invoke(this, new ClusterFinalizedEventArgs()
+            {
+                Time = DateTime.Now
+            });
+        }
+
+        private void SendClusterCreated()
+        {
+            OnClusterCreated?.Invoke(this, new ClusterCreatedEventArgs()
+            {
+                Size = size
+            });
         }
 
         private void SendProcessingDone()
         {
             OnProcessingDone?.Invoke(this, new ProcessingDoneEventArgs()
             {
-                ClusterGUID = ClusterGUID
+                Time = DateTime.Now
             });
         }
 
-        private void SendJobDistributed()
-        {
-            var i = 0;
-            OnJobsDistributed?.Invoke(this, new JobsDistributedEventArgs() {
-                ClusterGUID = ClusterGUID,
-                Jobs = Jobs.Select(j => new JobInfoMessage()
-                {
-                    Index = j.Index,
-                    Node = i++ % size,
-                    Weight = j.Weight
-                })
-            });
-
-        }
-
-        private void SendProcessStarted()
+        private void SendProcessingStarted()
         {
             var i = 0;
             OnProcessingStarted?.Invoke(this, new ProcessingStartedEventArgs() {
-                ClusterGUID = ClusterGUID,
-                Jobs = Jobs.Select(j => new JobInfoMessage()
+                Info = Jobs.Select(j => new JobInfo()
                 {
                     Index = j.Index,
                     Node = i++ % size,
                     Weight = j.Weight
                 })
             });
-        }
 
+        }
+        
         private void SendProcessingLog()
         {
             var tasks = new Task[size];
@@ -119,16 +126,9 @@ namespace PurpleMonitoringClient.Mock
         {
             OnJobStatus?.Invoke(this, new JobStatusEventArgs()
             {
-                ClusterGUID = ClusterGUID,
-                JobStatuses = new List<JobStatusMessage>
-                    {
-                        new JobStatusMessage()
-                        {
-                            Index = index,
-                            Status = status,
-                            Timestamp = DateTime.Now.AddHours(-32)
-                        }
-                    }
+                Time = DateTime.Now,
+                Index = index,
+                Status = status
             });
         }
     }

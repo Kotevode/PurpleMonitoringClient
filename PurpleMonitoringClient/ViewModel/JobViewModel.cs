@@ -1,40 +1,78 @@
-﻿using PurpleMonitoringClient.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
+using static PurpleMonitoringClient.Client.JobStatusEventArgs;
 
 namespace PurpleMonitoringClient.ViewModel
 {
-    public class JobViewModel
+    public class JobViewModel : INotifyPropertyChanged
     {
-        public Job Job { get; private set; }
-        public double BlockHeight { get; private set; }
-        public int Weight { get; private set; }
-        public Color BackgroundColor { get; private set; }
-
-        public JobViewModel(Job job, int maxLoad)
+        int weight;
+        public int Weight
         {
-            this.Job = job;
-            this.BlockHeight = (double)job.Weight / maxLoad * 300;
-            switch (Job.Status)
+            get { return weight; }
+            set
             {
-                case Client.JobStatus.Running:
-                    BackgroundColor = Colors.Yellow;
-                    break;
-                case Client.JobStatus.Done:
-                    BackgroundColor = Colors.Green;
-                    break;
-                case Client.JobStatus.Error:
-                    BackgroundColor = Colors.Red;
-                    break;
-                default:
-                    BackgroundColor = Colors.White;
-                    break;
+                weight = value;
+                OnPropertyChanged("BlockHeight");
             }
+        }
+        
+        public int MaxLoad { get; private set; }
+
+        public double BlockHeight
+        {
+            get { return (double)Weight / MaxLoad * 300;  }
+        }
+
+        JobStatus status = JobStatus.Waiting;
+        public JobStatus Status
+        {
+            get { return status; }
+            set
+            {
+                status = value;
+                OnPropertyChanged("BackgroundColor");
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case JobStatus.Running:
+                        return Colors.Yellow;
+                    case JobStatus.Done:
+                        return Colors.Green;
+                    case JobStatus.Error:
+                        return Colors.Red;
+                    default:
+                        return Colors.White;
+                }
+            }
+        }
+        public int Index { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public JobViewModel(int index, int weight, int maxLoad)
+        {
+            Index = index;
+            MaxLoad = maxLoad;
+            Weight = weight;
+        }
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

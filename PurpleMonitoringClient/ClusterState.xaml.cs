@@ -1,4 +1,4 @@
-﻿using PurpleMonitoringClient.Model;
+﻿using PurpleMonitoringClient.Client;
 using PurpleMonitoringClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -33,9 +33,9 @@ namespace PurpleMonitoringClient
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is Cluster)
+            if (e.Parameter is INotifier)
             {
-                ViewModel = new ClusterDetailViewModel(e.Parameter as Cluster, this.Dispatcher);
+                ViewModel = new ClusterDetailViewModel(this.Dispatcher, e.Parameter as INotifier);
             }
             else
             {

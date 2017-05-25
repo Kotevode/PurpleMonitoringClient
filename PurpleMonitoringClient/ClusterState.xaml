@@ -13,7 +13,7 @@
             <Grid>
                 <RelativePanel Height="{x:Bind BlockHeight}">
                     <RelativePanel.Background>
-                        <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
+                        <SolidColorBrush Color="{x:Bind BackgroundColor, Mode=OneWay}"/>
                     </RelativePanel.Background>
                     <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
                                RelativePanel.AlignTopWithPanel="True"

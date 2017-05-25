@@ -8,7 +8,7 @@
     xmlns:vm="using:PurpleMonitoringClient.ViewModel"
     mc:Ignorable="d">
     <Page.Resources>
-        <DataTemplate x:Key="ClusterMasterItemTemplate" x:DataType="vm:ClusterMasterViewModel">
+        <!--<DataTemplate x:Key="ClusterMasterItemTemplate" x:DataType="vm:ClusterMasterViewModel">
             <RelativePanel Width="300"
                            Height="300"
                            Padding="4">
@@ -21,7 +21,7 @@
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignBottomWithPanel="True"/>
             </RelativePanel>
-        </DataTemplate>
+        </DataTemplate>-->
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Padding="16">
@@ -29,13 +29,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal"
+        <!--<StackPanel Orientation="Horizontal"
                     Margin="0,0,0,8">
             <TextBlock Text="Сервер"
                        Style="{ThemeResource HeaderTextBlockStyle}"/>
         </StackPanel>
         <GridView Grid.Row="1"
                   ItemTemplate="{StaticResource ClusterMasterItemTemplate}">
-        </GridView>
+        </GridView>-->
     </Grid>
 </Page>

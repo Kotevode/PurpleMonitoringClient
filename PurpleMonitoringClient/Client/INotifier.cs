@@ -8,28 +8,39 @@ namespace PurpleMonitoringClient.Client
 {
     public class NotifierArgs
     {
-        public Guid ClusterGUID { get; set; }
+        public DateTime Time;
     }
 
     public class ClusterCreatedEventArgs: NotifierArgs
     {
-        public string Name { get; set; }
         public int Size { get; set; }
     }
 
     public class ProcessingStartedEventArgs: NotifierArgs
     {
-        public IEnumerable<JobInfoMessage> Jobs { get; set; }
-    }
-    
-    public class JobsDistributedEventArgs: NotifierArgs
-    {
-        public IEnumerable<JobInfoMessage> Jobs { get; set; }
+        public class JobInfo
+        {
+            public int Weight { get; set; }
+            public int Node { get; set; }
+            public int Index { get; set; }
+        }
+
+        public IEnumerable<JobInfo> Info { get; set; }
+
     }
 
     public class JobStatusEventArgs: NotifierArgs
     {
-        public IEnumerable<JobStatusMessage> JobStatuses { get; set; }
+        public enum JobStatus
+        {
+            Waiting,
+            Running,
+            Done,
+            Error
+        }
+
+        public int Index { get; set; }
+        public JobStatus Status { get; set; }
     }
 
     public class ProcessingDoneEventArgs: NotifierArgs {}
@@ -38,14 +49,13 @@ namespace PurpleMonitoringClient.Client
     
     public class LogMessageEventArgs: NotifierArgs
     {
-        public IEnumerable<Message> Messages { get; set; }
+        public string Body { get; set; }
     }
 
     public interface INotifier
     {
         event EventHandler<ClusterCreatedEventArgs> OnClusterCreated;
         event EventHandler<ProcessingStartedEventArgs> OnProcessingStarted;
-        event EventHandler<JobsDistributedEventArgs> OnJobsDistributed;
         event EventHandler<JobStatusEventArgs> OnJobStatus;
         event EventHandler<ProcessingDoneEventArgs> OnProcessingDone;
         event EventHandler<ClusterFinalizedEventArgs> OnClusterFinalized;

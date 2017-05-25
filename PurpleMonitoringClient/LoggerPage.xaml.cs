@@ -1,4 +1,5 @@
-﻿using PurpleMonitoringClient.ViewModel;
+﻿using PurpleMonitoringClient.Client;
+using PurpleMonitoringClient.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using static PurpleMonitoringClient.Model.Cluster;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,9 +33,9 @@ namespace PurpleMonitoringClient
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is Logger)
+            if (e.Parameter is INotifier)
             {
-                ViewModel = new LoggerViewModel(e.Parameter as Logger, Dispatcher);
+                ViewModel = new LoggerViewModel(Dispatcher, e.Parameter as INotifier);
             }
             else
             {

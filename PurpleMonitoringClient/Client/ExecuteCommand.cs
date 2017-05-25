@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace PurpleMonitoringClient.Client
 {
-    public class JobInfoMessage
+    class ExecuteCommand
     {
-        public int Weight { get; set; }
-        public int? Node { get; set; }
-        public int Index { get; set; }
+        
     }
 }

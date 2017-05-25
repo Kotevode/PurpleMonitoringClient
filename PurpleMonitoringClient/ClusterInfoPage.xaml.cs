@@ -1,4 +1,4 @@
-﻿using PurpleMonitoringClient.Model;
+﻿using PurpleMonitoringClient.Client;
 using PurpleMonitoringClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -33,11 +33,10 @@ namespace PurpleMonitoringClient
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ColorizeTitleBar();
-            if (e.Parameter is Cluster)
+            if (e.Parameter is INotifier)
             {
-                var cluster = e.Parameter as Cluster;
-                ClusterStatePageFrame.Navigate(typeof(ClusterState), cluster);
-                LoggerPageFrame.Navigate(typeof(LoggerPage), cluster.MessgeLogger);
+                ClusterStatePageFrame.Navigate(typeof(ClusterState), e.Parameter);
+                LoggerPageFrame.Navigate(typeof(LoggerPage), e.Parameter);
             }
         }
 

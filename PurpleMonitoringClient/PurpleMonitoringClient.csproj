@@ -96,7 +96,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Client\ExecuteCommand.cs" />
     <Compile Include="Client\INotifier.cs" />
     <Compile Include="Client\WSNotifier.cs" />
     <Compile Include="ClusterInfoPage.xaml.cs">
@@ -109,6 +108,10 @@
       <DependentUpon>LoggerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mock\DummyNotifier.cs" />
+    <Compile Include="Model\Executing\Command.cs" />
+    <Compile Include="Model\Executing\Node.cs" />
+    <Compile Include="Model\Executing\Program.cs" />
+    <Compile Include="Networking\Service.cs" />
     <Compile Include="ViewModel\ClusterDetailViewModel.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -119,6 +122,8 @@
     <Compile Include="ViewModel\LoggerViewModel.cs" />
     <Compile Include="ViewModel\LogMessageViewModel.cs" />
     <Compile Include="ViewModel\NodeStateViewModel.cs" />
+    <Compile Include="ViewModel\ProgramListViewModel.cs" />
+    <Compile Include="ViewModel\ProgramViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

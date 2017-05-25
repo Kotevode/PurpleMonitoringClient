@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PurpleMonitoringClient.Model.Executing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,15 @@ namespace PurpleMonitoringClient.Client
     {
         MessageWebSocket webSocket;
 
-        public WSNotifier(Uri url, ExecuteCommand command)
+        public WSNotifier(Uri url, Command command)
         {
             webSocket = new MessageWebSocket();
             webSocket.Control.MessageType = SocketMessageType.Utf8;
             webSocket.MessageReceived += Ws_MessageReceived;
             webSocket.Closed += Ws_Closed;
-            Connect(url, command);
         }
 
-        async void Connect(Uri url, ExecuteCommand command)
+        async void Execute(Uri url, Command command)
         {
             //await webSocket.ConnectAsync(url);
             //var writer = new DataWriter(webSocket.OutputStream);

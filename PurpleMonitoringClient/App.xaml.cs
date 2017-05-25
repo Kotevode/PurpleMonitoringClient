@@ -71,10 +71,7 @@ namespace PurpleMonitoringClient
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    var notifier = new DummyNotifier(8, 80);
-                    rootFrame.Navigate(typeof(ClusterInfoPage), notifier);
-                    Client = notifier;
-                    Task.Run(() => notifier.Run());
+                    rootFrame.Navigate(typeof(MainPage));
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();

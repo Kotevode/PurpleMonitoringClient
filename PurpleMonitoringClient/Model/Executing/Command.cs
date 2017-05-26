@@ -4,21 +4,23 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace PurpleMonitoringClient.Model.Executing
 {
-    [DataContract]
     class Command
     {
-        [DataMember]
+        [JsonProperty]
         int program;
-        [DataMember]
+        [JsonProperty]
         List<Node> nodes;
 
-        public int ProgramID { get { return program; } }
-        public List<Node> Nodes { get { return nodes; } }
-
-        Command(int program, List<Node> nodes)
+        [JsonIgnore]
+        public int ProgramID => program;
+        [JsonIgnore]
+        public List<Node> Nodes => nodes;
+        
+        public Command(int program, List<Node> nodes)
         {
             this.program = program;
             this.nodes = nodes;

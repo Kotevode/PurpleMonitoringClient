@@ -7,17 +7,18 @@ using PurpleMonitoringClient.Model.Executing;
 
 namespace PurpleMonitoringClient.ViewModel
 {
+    using Model.Executing;
+
     public class ProgramViewModel
     {
-        Model.Executing.Program program;
+        public Program Program { get; set; }
 
-        public string Name => program.Name;
-        public string Description => program.Description;
-
-        public ProgramViewModel(Model.Executing.Program program)
+        public string Name => Program.Name;
+        public string Description => Program.Description;
+        
+        public ProgramViewModel(Program program)
         {
-            this.program = program;
+            Program = program;
         }
-
     }
 }

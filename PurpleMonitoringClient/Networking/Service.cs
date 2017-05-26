@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace PurpleMonitoringClient.Networking
 {
     using Model.Executing;
+    using Newtonsoft.Json;
 
     class Service
     {
@@ -29,17 +30,13 @@ namespace PurpleMonitoringClient.Networking
 
         Service() {}
 
-        public Task<Program[]> GetAvailablePrograms(string hostName)
+        public Task<Program[]> GetAvailableProgramsAsync(string hostName)
         {
             return Task<Program>.Run(() =>
             {
                 Uri url = new UriBuilder("http", hostName, 8080, "programs").Uri;
                 var response = httpClient.GetAsync(url.AbsoluteUri).Result;
-                var serializer = new DataContractJsonSerializer(typeof(Model.Executing.Program[]));
-                using (var ms = response.Content.ReadAsStreamAsync().Result)
-                {
-                    return serializer.ReadObject(ms) as Model.Executing.Program[];
-                }
+                return JsonConvert.DeserializeObject<Program[]>(response.Content.ReadAsStringAsync().Result);
             });
             
         }

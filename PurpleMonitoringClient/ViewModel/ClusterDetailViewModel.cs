@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System;
-using System.Threading.Tasks;
 using Windows.UI.Core;
 
 namespace PurpleMonitoringClient.ViewModel
@@ -28,7 +27,7 @@ namespace PurpleMonitoringClient.ViewModel
             notifier.OnProcessingDone += Notifier_OnProcessingDone;
         }
 
-        async void Notifier_OnProcessingDone(object sender, ProcessingDoneEventArgs e)
+        async void Notifier_OnProcessingDone(object sender, ClusterEventArgs<ProcessingDone> e)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -39,21 +38,21 @@ namespace PurpleMonitoringClient.ViewModel
             });
         }
 
-        async void Notifier_OnProcessingStarted(object sender, ProcessingStartedEventArgs e)
+        async void Notifier_OnProcessingStarted(object sender, ClusterEventArgs<ProcessingStarted> e)
         {
            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
            {
                 var nodeLoad = new int[Nodes.Count];
-                foreach (var j in e.Info)
+                foreach (var j in e.Content.Info)
                     nodeLoad[j.Node] += j.Weight;
                 var maxLoad = nodeLoad.Max();
 
-                foreach (var j in e.Info)
+                foreach (var j in e.Content.Info)
                     Nodes[j.Node].Undone.Add(new JobViewModel(j.Index, j.Weight, maxLoad));
             });
         }
 
-        async void Notifier_OnClusterFinalized(object sender, ClusterFinalizedEventArgs e)
+        async void Notifier_OnClusterFinalized(object sender, ClusterEventArgs<ClusterFinalized> e)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -61,11 +60,11 @@ namespace PurpleMonitoringClient.ViewModel
             });
         }
 
-        async void Notifier_OnClusterCreated(object sender, ClusterCreatedEventArgs e)
+        async void Notifier_OnClusterCreated(object sender, ClusterEventArgs<ClusterCreated> e)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                for (int i = 0; i < e.Size; i++)
+                for (int i = 0; i < e.Content.Size; i++)
                     Nodes.Add(new NodeStateViewModel(dispatcher, notifier, i));
             });
         }

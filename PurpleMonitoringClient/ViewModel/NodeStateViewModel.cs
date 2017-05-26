@@ -1,12 +1,9 @@
 ﻿using PurpleMonitoringClient.Client;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Core;
-using static PurpleMonitoringClient.Client.JobStatusEventArgs;
+using static PurpleMonitoringClient.Client.JobStatusChanged;
 
 namespace PurpleMonitoringClient.ViewModel
 {
@@ -16,7 +13,6 @@ namespace PurpleMonitoringClient.ViewModel
         public ObservableCollection<JobViewModel> Done = new ObservableCollection<JobViewModel>();
         public int Index { get; private set; }
         CoreDispatcher dispatcher;
-        INotifier notifier;
 
         public NodeStateViewModel(CoreDispatcher dispatcher, INotifier notifier, int index)
         {
@@ -27,31 +23,32 @@ namespace PurpleMonitoringClient.ViewModel
 
         void Subscribe(INotifier notifier)
         {
-            notifier.OnJobStatus += Notifier_OnJobStatus;
+            notifier.OnJobStatusChanged += Notifier_OnJobStatusChanged;
         }
 
-        async private void Notifier_OnJobStatus(object sender, JobStatusEventArgs e)
+        async private void Notifier_OnJobStatusChanged(object sender, ClusterEventArgs<JobStatusChanged> e)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
+                var content = e.Content;
                 JobViewModel vm = null;
-                if ((vm = Undone.FirstOrDefault(x => x.Index == e.Index)) != null)
+                if ((vm = Undone.FirstOrDefault(x => x.Index == content.Index)) != null)
                 {
-                    if (e.Status == JobStatus.Done || e.Status == JobStatus.Error)
+                    if (content.Status == JobStatus.Done || content.Status == JobStatus.Error)
                     {
                         Undone.Remove(vm);
                         Done.Add(vm);
                     }
-                    vm.Status = e.Status;
+                    vm.Status = content.Status;
                 }
-                else if ((vm = Done.FirstOrDefault(x => x.Index == e.Index)) != null)
+                else if ((vm = Done.FirstOrDefault(x => x.Index == content.Index)) != null)
                 {
-                    if (e.Status == JobStatus.Waiting || e.Status == JobStatus.Running)
+                    if (content.Status == JobStatus.Waiting || content.Status == JobStatus.Running)
                     {
                         Done.Remove(vm);
                         Undone.Add(vm);
                     }
-                    vm.Status = e.Status;
+                    vm.Status = content.Status;
                 }
             });
         }

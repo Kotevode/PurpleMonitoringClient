@@ -11,17 +11,26 @@
     <Page.Resources>
         <DataTemplate x:Key="ProgramsItemTemplate" x:DataType="vm:ProgramViewModel">
             <Grid Width="300"
-                  Height="200">
+                  Height="200"
+                  Padding="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
                            Text="{x:Bind Name, Mode=OneWay}"
+                           Padding="0,0,0,8"
                            />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                            Text="{x:Bind Description, Mode=OneWay}"
                            Grid.Row="1"/>
+                <Button Name="RunButton"
+                        Grid.Row="2"
+                        Click="RunProgram"
+                        Tag="{x:Bind Program}">
+                    Запустить
+                </Button>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -46,7 +55,8 @@
         </Grid>
         <GridView Grid.Row="1"
                   ItemTemplate="{StaticResource ProgramsItemTemplate}"
-                  ItemsSource="{x:Bind ViewModel.Programs}">
+                  ItemsSource="{x:Bind ViewModel.Programs}"
+                  IsItemClickEnabled="False">
         </GridView>
     </Grid>
 </Page>

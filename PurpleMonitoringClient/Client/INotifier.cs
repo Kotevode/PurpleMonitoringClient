@@ -1,35 +1,81 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PurpleMonitoringClient.Client
 {
-    public class NotifierArgs
+    public class ClusterEventArgs<T>
     {
-        public DateTime Time;
+        DateTime time;
+        T content;
+
+        public DateTime Time => time;
+        public T Content => content;
+
+        [JsonConstructor]
+        public ClusterEventArgs(int time, T content)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            epoch.AddSeconds(time);
+            this.time = epoch;
+            this.content = content;
+        }
+
+        public ClusterEventArgs(DateTime time, T content)
+        {
+            this.time = time;
+            this.content = content;
+        }
+
     }
 
-    public class ClusterCreatedEventArgs: NotifierArgs
+    public class ClusterCreated
     {
-        public int Size { get; set; }
+        int size;
+
+        public int Size => size;
+
+        [JsonConstructor]
+        public ClusterCreated(int size)
+        {
+            this.size = size;
+        }
+
     }
 
-    public class ProcessingStartedEventArgs: NotifierArgs
+    public class ProcessingStarted
     {
         public class JobInfo
         {
-            public int Weight { get; set; }
-            public int Node { get; set; }
-            public int Index { get; set; }
+            int weight;
+            int node;
+            int index;
+
+            public int Weight => weight;
+            public int Node => node;
+            public int Index => index;
+
+            [JsonConstructor]
+            public JobInfo(int weight, int node, int index)
+            {
+                this.weight = weight;
+                this.node = node;
+                this.index = index;
+            }
         }
 
-        public IEnumerable<JobInfo> Info { get; set; }
+        List<JobInfo> info;
 
+        public List<JobInfo> Info => info;
+
+        [JsonConstructor]
+        public ProcessingStarted(List<JobInfo> info)
+        {
+            this.info = info;
+        }
     }
 
-    public class JobStatusEventArgs: NotifierArgs
+    public class JobStatusChanged
     {
         public enum JobStatus
         {
@@ -39,26 +85,50 @@ namespace PurpleMonitoringClient.Client
             Error
         }
 
-        public int Index { get; set; }
-        public JobStatus Status { get; set; }
+        int index;
+        JobStatus status;
+
+        public int Index => index;
+        public JobStatus Status => status;
+
+        [JsonConstructor]
+        public JobStatusChanged(int index, JobStatus status)
+        {
+            this.index = index;
+            this.status = status;
+        }
     }
 
-    public class ProcessingDoneEventArgs: NotifierArgs {}
+    public class ProcessingDone {}
 
-    public class ClusterFinalizedEventArgs : NotifierArgs {}
+    public class ClusterFinalized {}
     
-    public class LogMessageEventArgs: NotifierArgs
+    public class LogMessage
     {
-        public string Body { get; set; }
+        string body;
+
+        public string Body => body;
+
+        LogMessage(string body)
+        {
+            this.body = body;
+        }
+    }
+
+    public class Terminated
+    {
+        public bool Succeed { get; set; }
+        public string Message { get; set; }
     }
 
     public interface INotifier
     {
-        event EventHandler<ClusterCreatedEventArgs> OnClusterCreated;
-        event EventHandler<ProcessingStartedEventArgs> OnProcessingStarted;
-        event EventHandler<JobStatusEventArgs> OnJobStatus;
-        event EventHandler<ProcessingDoneEventArgs> OnProcessingDone;
-        event EventHandler<ClusterFinalizedEventArgs> OnClusterFinalized;
-        event EventHandler<LogMessageEventArgs> OnLogMessage;
+        event EventHandler<ClusterEventArgs<ClusterCreated>> OnClusterCreated;
+        event EventHandler<ClusterEventArgs<ProcessingStarted>> OnProcessingStarted;
+        event EventHandler<ClusterEventArgs<JobStatusChanged>> OnJobStatusChanged;
+        event EventHandler<ClusterEventArgs<ProcessingDone>> OnProcessingDone;
+        event EventHandler<ClusterEventArgs<ClusterFinalized>> OnClusterFinalized;
+        event EventHandler<ClusterEventArgs<LogMessage>> OnLogMessage;
+        event EventHandler<ClusterEventArgs<Terminated>> OnTerminated;
     }
 }

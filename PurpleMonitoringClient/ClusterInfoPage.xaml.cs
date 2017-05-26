@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,7 +38,27 @@ namespace PurpleMonitoringClient
             {
                 ClusterStatePageFrame.Navigate(typeof(ClusterState), e.Parameter);
                 LoggerPageFrame.Navigate(typeof(LoggerPage), e.Parameter);
+                (e.Parameter as INotifier).OnTerminated += ClusterInfoPage_OnTerminated;
             }
+        }
+
+        async void ClusterInfoPage_OnTerminated(object sender, ClusterEventArgs<Terminated> e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+           {
+               if (e.Content.Succeed == true)
+               {
+                   await new MessageDialog("Выполнение завершено")
+                       .ShowAsync();
+                   Frame.GoBack();
+               }
+               else
+               {
+                   await new MessageDialog("Выполнение завершено c ошибкой\n" + e.Content.Message, "Ошибка")
+                       .ShowAsync();
+                   Frame.GoBack();
+               }
+           });
         }
 
         private void ColorizeTitleBar()

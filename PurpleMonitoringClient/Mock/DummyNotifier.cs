@@ -3,21 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static PurpleMonitoringClient.Client.JobStatusEventArgs;
-using static PurpleMonitoringClient.Client.ProcessingStartedEventArgs;
+using static PurpleMonitoringClient.Client.JobStatusChanged;
+using static PurpleMonitoringClient.Client.ProcessingStarted;
 
 namespace PurpleMonitoringClient.Mock
 {
     public class DummyNotifier : INotifier
     {
-        public event EventHandler<ClusterCreatedEventArgs> OnClusterCreated;
-        public event EventHandler<ProcessingStartedEventArgs> OnProcessingStarted;
-        public event EventHandler<JobStatusEventArgs> OnJobStatus;
-        public event EventHandler<ProcessingDoneEventArgs> OnProcessingDone;
-        public event EventHandler<ClusterFinalizedEventArgs> OnClusterFinalized;
-        public event EventHandler<LogMessageEventArgs> OnLogMessage;
+        public event EventHandler<ClusterEventArgs<ClusterCreated>> OnClusterCreated;
+        public event EventHandler<ClusterEventArgs<ProcessingStarted>> OnProcessingStarted;
+        public event EventHandler<ClusterEventArgs<JobStatusChanged>> OnJobStatusChanged;
+        public event EventHandler<ClusterEventArgs<ProcessingDone>> OnProcessingDone;
+        public event EventHandler<ClusterEventArgs<ClusterFinalized>> OnClusterFinalized;
+        public event EventHandler<ClusterEventArgs<LogMessage>> OnLogMessage;
+        public event EventHandler<ClusterEventArgs<Terminated>> OnTerminated;
 
         class Job
         {
@@ -56,46 +56,47 @@ namespace PurpleMonitoringClient.Mock
             SendProcessingLog();
             SendProcessingDone();
             SendClusterFinalized();
+            SendOnTerminated();
         }
 
         private void SendClusterFinalized()
         {
-            OnClusterFinalized?.Invoke(this, new ClusterFinalizedEventArgs()
-            {
-                Time = DateTime.Now
-            });
+            OnClusterFinalized?.Invoke(
+                this,
+                new ClusterEventArgs<ClusterFinalized>(DateTime.Now, new ClusterFinalized())
+                );
         }
 
         private void SendClusterCreated()
         {
-            OnClusterCreated?.Invoke(this, new ClusterCreatedEventArgs()
-            {
-                Size = size
-            });
+            OnClusterCreated?.Invoke(
+                this,
+                new ClusterEventArgs<ClusterCreated>(
+                    DateTime.Now,
+                    new ClusterCreated(size)));
         }
 
         private void SendProcessingDone()
         {
-            OnProcessingDone?.Invoke(this, new ProcessingDoneEventArgs()
-            {
-                Time = DateTime.Now
-            });
+            OnProcessingDone?.Invoke(
+                this, 
+                new ClusterEventArgs<ProcessingDone>(
+                    DateTime.Now,
+                    new ProcessingDone()));
         }
 
         private void SendProcessingStarted()
         {
             var i = 0;
-            OnProcessingStarted?.Invoke(this, new ProcessingStartedEventArgs() {
-                Info = Jobs.Select(j => new JobInfo()
-                {
-                    Index = j.Index,
-                    Node = i++ % size,
-                    Weight = j.Weight
-                })
-            });
+            var info = Jobs.Select(j => new JobInfo(j.Weight, i++ % size, j.Index)).ToList();
+            OnProcessingStarted?.Invoke(
+                this,
+                new ClusterEventArgs<ProcessingStarted>(
+                    DateTime.Now,
+                    new ProcessingStarted(info)));
 
         }
-        
+
         private void SendProcessingLog()
         {
             var tasks = new Task[size];
@@ -107,11 +108,20 @@ namespace PurpleMonitoringClient.Mock
             Task.WaitAll(tasks);
         }
 
+        private void SendOnTerminated()
+        {
+            OnTerminated?.Invoke(
+                this,
+                new ClusterEventArgs<Terminated>(
+                    DateTime.Now,
+                    new Terminated { Succeed = true }));
+        }
+
         private async Task ProcessJob(int rank)
         {
             Debug.WriteLine("Processing on {0} started", rank);
             int i = 0;
-            foreach(var j in Jobs)
+            foreach (var j in Jobs)
             {
                 if (i++ % size != rank)
                     continue;
@@ -124,12 +134,11 @@ namespace PurpleMonitoringClient.Mock
 
         void SendJobStatus(int index, JobStatus status)
         {
-            OnJobStatus?.Invoke(this, new JobStatusEventArgs()
-            {
-                Time = DateTime.Now,
-                Index = index,
-                Status = status
-            });
+            OnJobStatusChanged?.Invoke(
+                this, 
+                new ClusterEventArgs<JobStatusChanged>(
+                    DateTime.Now,
+                    new JobStatusChanged(index, status)));
         }
     }
 }

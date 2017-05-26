@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI;
-using Windows.UI.Core;
-using static PurpleMonitoringClient.Client.JobStatusEventArgs;
+using static PurpleMonitoringClient.Client.JobStatusChanged;
 
 namespace PurpleMonitoringClient.ViewModel
 {

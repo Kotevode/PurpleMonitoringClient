@@ -30,7 +30,7 @@ namespace PurpleMonitoringClient.ViewModel
         {
             try
             {
-                var programs = await Service.Instance.GetAvailablePrograms(Host);
+                var programs = await Service.Instance.GetAvailableProgramsAsync(Host);
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     Programs.Clear();

@@ -12,7 +12,7 @@ namespace PurpleMonitoringClient.ViewModel
         public string Body { get; private set; }
         public LogMessageViewModel(string body, DateTime time)
         {
-            Timestamp = time.ToString();
+            Timestamp = DateTime.Now.ToString();
             Body = body;
         }
     }
